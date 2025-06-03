@@ -10,8 +10,7 @@ import {
 import {useNavigation} from '@react-navigation/native';
 
 const CompanyID = () => {
-  const CompanyID = ['company1', 'company2', 'company3'];
-  const [valid, setValid] = useState(true);
+
   const [input, setInput] = useState('');
   const navigation = useNavigation();
   return (
@@ -33,19 +32,14 @@ const CompanyID = () => {
           
         }}
       />
-        {input.length > 0 && !valid && (
-    <Text style={{ color: 'red', marginBottom: 8 }}>
-      Company ID is invalid
-    </Text>
-  )}
+      
+
       <TouchableOpacity
         style={{padding: 10, backgroundColor: 'blue', borderRadius: 5}}
         onPress={() => {
-         const isValid = CompanyID.includes(input.trim());
-          setValid(isValid);
-          if (isValid) {
+        
             navigation.navigate('PickVoice');
-          }
+          
         }}>
         <Text style={{color: 'white', fontSize: 16}}>Continue</Text>
       </TouchableOpacity>

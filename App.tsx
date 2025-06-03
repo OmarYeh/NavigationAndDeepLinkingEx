@@ -1,4 +1,4 @@
-import React from 'react';
+import React,{ useRef, useEffect } from 'react';
 import type {PropsWithChildren} from 'react';
 
 import {
@@ -8,6 +8,7 @@ import {
   Text,
   useColorScheme,
   View,
+  AppState
 } from 'react-native';
 
 import {
@@ -59,11 +60,23 @@ const SettingsStackScreen = () => {
 }
 const Stack = createNativeStackNavigator();
 function App(): React.JSX.Element {
-  
+  const navigationRef = useRef();
+
+  useEffect(() => {
+    const subscription = AppState.addEventListener('change', (state) => {
+      if (state === 'active' && navigationRef.current) {
+        navigationRef.current.reset({
+          index: 0,
+          routes: [{ name: 'Splash' }],
+        });
+      }
+    });
+    return () => subscription.remove();
+  }, []);
 
   return (
     <>
-    <NavigationContainer>
+    <NavigationContainer ref={navigationRef}>
   <Stack.Navigator>
     <Stack.Screen name="Splash" component={Splash} options={{ headerShown: false }}/>
   <Stack.Screen name="OnboardingStackScreen" component={OnboardingStackScreen}   options={{ headerShown: false }}/>
