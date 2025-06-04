@@ -24,8 +24,10 @@ const CompanyID = () => {
           width: 200,
           marginBottom: 16,
           color: 'black',
+          
         }}
         placeholder="Enter company ID..."
+        placeholderTextColor="gray"
         value={input}
         onChangeText={text => {
           setInput(text);
