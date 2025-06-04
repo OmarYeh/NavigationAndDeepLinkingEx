@@ -15,14 +15,14 @@
    ```bash
    git clone [your-repo-link]
 
-2. **Connect to a device or emulator**
-   *-  Connect a physical Android device via USB or set up wireless debugging using adb.*
-   *-  Alternatively, use an Android emulator.*
+2. **Connect to a device or emulator**  
+   - Connect a physical Android device via USB or set up wireless debugging using `adb`.  
+   - Alternatively, use an Android emulator.
 
-3.  **Install project dependencies**
+4.  **Install project dependencies**
      ```bash
      npm install
      
-4.  **Build and run the project**
+5.  **Build and run the project**
      ```bash
      npx react-native run-android
