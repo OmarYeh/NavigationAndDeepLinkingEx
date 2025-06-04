@@ -24,5 +24,5 @@
      npm install
      
 4.  **Build and run the project**
-   ```bash
-    npx react-native run-android
+     ```bash
+     npx react-native run-android
