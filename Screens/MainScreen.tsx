@@ -32,14 +32,20 @@ const linking = {
   prefixes: ['navigationanddeeplinkex://'],
   config: {
     screens: {
-      SetCompanyID: 'set-company-id',
+      Settings: {
+        path: 'settings',
+        screens: {
+          SetCompanyID: 'set-company-id',
+
+        },
+      },
     },
   },
 };
 
 const SettingsStack = createNativeStackNavigator();
 
-const SettingsStackScreen = () => {
+const SettingsStackScreen = React.forwardRef((props, ref) => {
   const screenOptions = useMemo<StackNavigationOptions>(
     () => ({
       ...TransitionPresets.SlideFromRightIOS,
@@ -66,7 +72,7 @@ const SettingsStackScreen = () => {
 
   return (
     <NavigationIndependentTree>
-      <NavigationContainer linking={linking}>
+      <NavigationContainer ref={ref} linking={linking}>
         <SettingsStack.Navigator screenOptions={screenOptions}>
           <SettingsStack.Screen
             name="Settings"
@@ -92,16 +98,16 @@ const SettingsStackScreen = () => {
       </NavigationContainer>
     </NavigationIndependentTree>
   );
-};
+});
 
 const MainScreen = () => {
   const [voicebotVisible, setVoicebotVisible] = useState(false);
   const navigation = useNavigation();
-  const [openedFromDeeplink, setOpenedFromDeeplink] = useState(false);
   const sheetRef = useRef(null);
-  const snapPoints = useMemo(() => ['25%', '50%', '90%'], []);
+  const snapPoints = useMemo(() => ['25%', '50%', '100%'], []);
   const [isSheetOpen, setIsSheetOpen] = useState(false);
-
+  const [pendingDeeplink, setPendingDeeplink] = useState(false);
+  const stackNavRef = useRef(null);
   const handleSheetChange = useCallback((index: number) => {
     setIsSheetOpen(index !== -1);
   }, []);
@@ -117,25 +123,34 @@ const MainScreen = () => {
   useEffect(() => {
     const checkInitialUrl = async () => {
       const url = await Linking.getInitialURL();
-      console.log('This is url', url);
       if (url && url.includes('set-company-id')) {
-        setOpenedFromDeeplink(true);
+        setPendingDeeplink(true);
       }
     };
 
     checkInitialUrl();
-    const handleDeepLink = ({url}) => {
+
+    const handleDeepLink = ({url}: {url: string}) => {
       if (url && url.includes('set-company-id')) {
-        setOpenedFromDeeplink(true);
+        setPendingDeeplink(true);
       }
     };
 
     const subscription = Linking.addEventListener('url', handleDeepLink);
-
-    return () => {
-      subscription.remove();
-    };
+    return () => subscription.remove();
   }, []);
+
+useEffect(() => {
+  if (pendingDeeplink && sheetRef.current) {
+    setTimeout(() => {
+      sheetRef.current?.snapToIndex(2);
+      setTimeout(() => {
+        stackNavRef.current?.navigate('SetCompanyID');
+        setPendingDeeplink(false);
+      }, 200); 
+    }, 100);
+  }
+}, [pendingDeeplink]);
 
   return (
     <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
@@ -168,8 +183,9 @@ const MainScreen = () => {
         index={-1}
         enableDynamicSizing={false}
         onChange={handleSheetChange}
+        enablePanDownToClose={true}
         style={{position: 'absolute', zIndex: 1000}}>
-        <SettingsStackScreen />
+        <SettingsStackScreen ref={stackNavRef} />
       </BottomSheet>
     </View>
   );
