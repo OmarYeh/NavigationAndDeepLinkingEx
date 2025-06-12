@@ -26,3 +26,8 @@
 5.  **Build and run the project**
      ```bash
      npx react-native run-android
+
+## Deep Link Command
+To trigger the app with a deep link, use:
+```bash
+adb shell am start -W -a android.intent.action.VIEW -d "navigationanddeeplinkex://set-company-id" com.navigationanddeeplinkex
