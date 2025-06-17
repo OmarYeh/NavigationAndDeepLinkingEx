@@ -30,4 +30,4 @@
 ## Deep Link Command
 To trigger the app with a deep link, use:
 ```bash
-adb shell am start -W -a android.intent.action.VIEW -d "navigationanddeeplinkex://set-company-id" com.navigationanddeeplinkex
+npx uri-scheme open navigationanddeeplinkex://settings/setcompanyid --android
