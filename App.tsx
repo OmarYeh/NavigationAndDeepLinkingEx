@@ -1,22 +1,9 @@
-import React, {useRef, useEffect} from 'react';
-import type {PropsWithChildren} from 'react';
-
+import React, {useRef, useEffect, useState} from 'react';
 import {
-  ScrollView,
-  StyleSheet,
-  Text,
-  useColorScheme,
-  View,
   AppState,
+  Linking
 } from 'react-native';
 
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
 import {NavigationContainer, useNavigation} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import Splash from './Screens/Splash';
@@ -25,17 +12,41 @@ import CompanyID from './Screens/CompanyID';
 import PickVoice from './Screens/PickVoice';
 import MainScreen from './Screens/MainScreen';
 import Settings from './Screens/Settings';
+import SetCompanyId from './Screens/SetCompanyId';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
-import VoicebotScreen from './Screens/VoiceBot';
-type SectionProps = PropsWithChildren<{
-  title: string;
-}>;
+import { Screen } from 'react-native-screens';
+
+
+const linking = {
+  prefixes: ['navigationanddeeplinkex://'],
+  config: {
+    screens: {
+      Splash: '',
+      initialRouteName: 'Splash',
+      HomeStackScreen: {
+        path: 'home',
+        screens: {
+          MainScreen: '',
+        },
+      },
+      SettingsStackScreen: {
+        path: 'settings',
+        initialRouteName: 'Settings',
+        screens: {
+          Settings: '', 
+          SetCompanyId: 'setcompanyid',
+        },
+      },
+    },
+  },
+};
+
+
 
 const OnboardingStack = createNativeStackNavigator();
 const OnboardingStackScreen = () => {
-  const navigation = useNavigation();
   return (
-    <OnboardingStack.Navigator>
+    <OnboardingStack.Navigator >
       <OnboardingStack.Screen
         name="Welcome"
         component={Welcome}
@@ -54,7 +65,7 @@ const OnboardingStackScreen = () => {
 const homeStack = createNativeStackNavigator();
 const HomeStackScreen = () => {
   return (
-    <homeStack.Navigator>
+    <homeStack.Navigator >
       <homeStack.Screen
         name="MainScreen"
         component={MainScreen}
@@ -64,26 +75,62 @@ const HomeStackScreen = () => {
   );
 };
 
+const SettingsStack = createNativeStackNavigator();
+
+const SettingsStackScreen = () => {
+ 
+  return (
+        <SettingsStack.Navigator >
+          <SettingsStack.Screen
+            name="Settings"
+            component={Settings}
+
+          />
+          <SettingsStack.Screen
+            name="CompanyId"
+            component={CompanyID}
+          />
+          <SettingsStack.Screen
+            name="PickVoice"
+            component={PickVoice}
+          />
+          <SettingsStack.Screen
+            name="SetCompanyId"
+            component={SetCompanyId}
+          />
+        </SettingsStack.Navigator>
+
+  );
+};
+
+
 const Stack = createNativeStackNavigator();
 function App(): React.JSX.Element {
+  const [deeplink, setDeeplink] = useState(false);
   const navigationRef = useRef();
+useEffect(() => {
+  const handleInitialURL = async () => {
+    const initialUrl = await Linking.getInitialURL();
+    if (initialUrl) {
+      setDeeplink(true); 
+    } else {
 
-  useEffect(() => {
-    const subscription = AppState.addEventListener('change', state => {
-      if (state === 'active' && navigationRef.current) {
-        navigationRef.current.reset({
-          index: 0,
-          routes: [{name: 'Splash'}],
-        });
-      }
-    });
-    return () => subscription.remove();
-  }, []);
+      navigationRef.current?.reset({
+        index: 0,
+        routes: [{name: 'Splash'}],
+      });
+    }
+  };
+
+  handleInitialURL();
+}, []);
+
+
 
   return (
     <GestureHandlerRootView style={{flex: 1}}>
-      <NavigationContainer ref={navigationRef}>
-        <Stack.Navigator>
+      <NavigationContainer linking={linking} ref={navigationRef} >
+        <Stack.Navigator initialRouteName="Splash">
           <Stack.Screen
             name="Splash"
             component={Splash}
@@ -99,12 +146,16 @@ function App(): React.JSX.Element {
             component={HomeStackScreen}
             options={{headerShown: false}}
           />
+
+          <Stack.Screen
+            name="SettingsStackScreen"
+            component={SettingsStackScreen}
+            options={{ presentation: 'modal', headerShown: false }} />
         </Stack.Navigator>
       </NavigationContainer>
     </GestureHandlerRootView>
   );
 }
 
-const styles = StyleSheet.create({});
 
 export default App;
