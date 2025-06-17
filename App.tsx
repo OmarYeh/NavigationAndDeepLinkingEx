@@ -106,26 +106,7 @@ const SettingsStackScreen = () => {
 
 const Stack = createNativeStackNavigator();
 function App(): React.JSX.Element {
-  const [deeplink, setDeeplink] = useState(false);
   const navigationRef = useRef();
-useEffect(() => {
-  const handleInitialURL = async () => {
-    const initialUrl = await Linking.getInitialURL();
-    if (initialUrl) {
-      setDeeplink(true); 
-    } else {
-
-      navigationRef.current?.reset({
-        index: 0,
-        routes: [{name: 'Splash'}],
-      });
-    }
-  };
-
-  handleInitialURL();
-}, []);
-
-
 
   return (
     <GestureHandlerRootView style={{flex: 1}}>
