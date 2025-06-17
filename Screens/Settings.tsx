@@ -22,7 +22,7 @@ const Settings = () => {
           borderRadius: 5,
         }}
         onPress={() => {
-          navigation.navigate('SetCompanyID');
+          navigation.navigate('SetCompanyId');
         }}>
         <Text style={{color: 'white'}}>Set Company ID</Text>
       </TouchableOpacity>
