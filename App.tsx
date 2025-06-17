@@ -110,7 +110,11 @@ function App(): React.JSX.Element {
           <Stack.Screen
             name="SettingsStackScreen"
             component={SettingsStackScreen}
-            options={{presentation: 'modal', headerShown: false}}
+            options={{
+              presentation: 'transparentModal',
+              animation: 'slide_from_bottom',
+              headerShown: false,
+            }}
           />
         </Stack.Navigator>
       </NavigationContainer>
